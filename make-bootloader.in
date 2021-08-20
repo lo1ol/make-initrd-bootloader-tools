@@ -90,9 +90,11 @@ bootloader_update_config()
 		for kernel; do
 			[ -f "$kernel" ] ||
 				return 0
-
 			kver="${kernel##*/vmlinuz}"
 			kver="${kver#-}"
+			
+			kernel=${kernel#${bootdir}}
+			kernel=${kernel#/}
 
 			label="${kver:+Kernel ($kver)}"
 			label="${label:-Default}"
@@ -106,7 +108,7 @@ bootloader_update_config()
 			for initrd_name in initrd initramfs; do
 				for suf in '' '.img'; do
 					if [ -f "$bootdir/$initrd_name${kver:+-$kver}$suf" ]; then
-						initrd="$bootdir/$initrd_name${kver:+-$kver}$suf"
+						initrd="$initrd_name${kver:+-$kver}$suf"
 						break 2
 					fi
 				done
@@ -128,9 +130,9 @@ bootloader_update_config()
 	git_config_get_subsections 'boot'
 
 	{
-		print_entry "$bootdir"/vmlinuz
-		print_entry "$bootdir"/vmlinuz-[A-Za-z]*
-		print_entry "$bootdir"/vmlinuz-[0-9]*
+		print_entry $bootdir/vmlinuz
+		print_entry $bootdir/vmlinuz-[A-Za-z]*
+		print_entry $bootdir/vmlinuz-[0-9]*
 	} >> "$conf"
 }
 
