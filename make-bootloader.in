@@ -58,6 +58,15 @@ bootloader_copy()
 	cp $verbose -f -- "$@"
 }
 
+add_uefi_bootloader()
+{
+	verbose "Add uefi shell with startup.nsh script"
+	mkdir $verbose -p "$bootdir/efi/EFI/BOOT"
+
+	cp "$KERNEL_DIR/boot/Shell.efi" "$bootdir/efi/EFI/BOOT/BOOTX64.efi"
+	printf '\\EFI\\LINUX\\bootloader.efi initrd=\\EFI\\LINUX\\bootloader.img' > "$bootdir/efi/startup.nsh"
+}
+
 bootloader_update_config()
 {
 	verbose "Updating bootloader configuration"
@@ -170,5 +179,7 @@ bootloader_build_image
 
 bootloader_copy "$KERNEL_DIR/boot/vmlinuz"        "$bootdir/efi/EFI/LINUX/$PROJECT.efi"
 bootloader_copy "$KERNEL_DIR/boot/bootloader.img" "$bootdir/efi/EFI/LINUX/$PROJECT.img"
+
+add_uefi_bootloader
 
 bootloader_update_config

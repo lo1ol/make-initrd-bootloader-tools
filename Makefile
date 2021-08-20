@@ -31,7 +31,8 @@ all: make-bootloader build-kernel
 INSTALL_TARGETS = \
 	install-bin \
 	install-kernel \
-	install-config
+	install-config \
+	install-uefi-shell
 
 install: $(INSTALL_TARGETS)
 
@@ -53,6 +54,9 @@ install-kernel: linux build-kernel
 		install modules_install
 	$(MAKE) -C linux -s kernelversion > "$(DESTDIR)/$(basedir)/boot/version"
 	$(CP) -f -- linux/.config "$(DESTDIR)/$(basedir)/boot/config"
+
+install-uefi-shell:
+	$(CP) -f Shell.efi $(DESTDIR)/$(basedir)/boot/Shell.efi
 
 clean:
 	$(RM) -- $(PROJECT) $(MENU_PROG)
